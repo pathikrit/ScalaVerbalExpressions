@@ -176,12 +176,13 @@ class VerbalExpressionSpec extends Specification {
   }
 
   "or" should {
-    "append a new expression after an |" in {
+    "append a new range after an |" in {
       VerbalExpression()
         .range(0 -> 3)
         .or(VerbalExpression().range(6 -> 9))
         .toString mustEqual "([0-3])|([6-9])"
     }
+
     "append a new expression after an |" in {
       VerbalExpression()
         .add("aa")
@@ -189,7 +190,7 @@ class VerbalExpressionSpec extends Specification {
         .toString mustEqual "(aa)|(bb)"
     }
 
-    "append a new expression after an |" in {
+    "append a new string after an |" in {
       VerbalExpression()
         .add("aa")
         .or("bb")
@@ -205,6 +206,7 @@ class VerbalExpressionSpec extends Specification {
         .endOfLine()
         .test("baaaa") must beFalse
     }
+
     "match a given string to the build expression" in {
       VerbalExpression()
         .startOfLine()
@@ -240,11 +242,12 @@ class VerbalExpressionSpec extends Specification {
       assert("https://www.google.com" is validUrl)
       assert("ftp://home.comcast.net" isNot validUrl)
 
-      // VerbalExpressions can be nested within each other
+      val numberRegex = """(\Q-\E)?\d+((\Q.\E)\d+)?""" // negative sign followed by digits, followed by optional fraction part
+
       val fraction = $.andThen(".").digits()
       val number = $.maybe("-").digits().maybe(fraction)
-      val pattern = number.compile    // the compiled pattern
-      assert(number.regexp == """(\Q-\E)?\d+((\Q.\E)\d+)?""") // verify the regex
+      val pattern: java.util.regex.Pattern = number.compile    // the compiled pattern
+      assert(number.regexp == numberRegex)
 
       assert(Seq("3", "-4", "-0.458") forall number.check)
       assert(Seq("0.", "hello", "4.3.2") forall number.notMatch)

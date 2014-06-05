@@ -21,25 +21,27 @@ assert("ftp://home.comcast.net" isNot validUrl)
 
 For more methods, checkout the [wiki](https://github.com/VerbalExpressions/JSVerbalExpressions/wiki) and the [source](src/main/scala/com/github/verbalexpressions/VerbalExpression.scala)
 
-The intention of literate programming is to replace code comments with self evident code. For example:
+The intention of [self-documenting](http://en.wikipedia.org/wiki/Self-documenting) code is to replace comments with self-evident code. For example:
 
-BAD:
+*BAD* (have to mental-parse regex and/or trust the comment):
 
 ```scala
-val numberRegexp = """(\Q-\E)?\d+((\Q.\E)\d+)?""" // negative sign followed by digits, followed by optional fraction part
+val numberRegex = """(\Q-\E)?\d+((\Q.\E)\d+)?""" // negative sign followed by digits, followed by optional fraction part
 ```
 
-GOOD:
+*GOOD* (code describes what it is and assert in end to make sure no magic was done by the library):
 
 ```scala
 val fraction = $.andThen(".").digits()
 val number = $.maybe("-").digits().maybe(fraction)
-val pattern = number.compile    // the compiled pattern
-assert(number.regexp == """(\Q-\E)?\d+((\Q.\E)\d+)?""") // verify the regex
+val pattern: java.util.regex.Pattern = number.compile    // the compiled pattern
+assert(number.regexp == numberRegex)
 
 assert(Seq("3", "-4", "-0.458") forall number.check)
 assert(Seq("0.", "hello", "4.3.2") forall number.notMatch)
 ```
+
+Performance: The library is essentially [a builder](http://stackoverflow.com/questions/328496/) around a regex string. So, it is as fast as using vanilla regex strings.
 
 sbt
 ===
