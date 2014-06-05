@@ -17,16 +17,29 @@ val validUrl = $.startOfLine()
 
 assert("https://www.google.com" is validUrl)
 assert("ftp://home.comcast.net" isNot validUrl)
+```
 
-// VerbalExpressions can be nested within each other
+For more methods, checkout the [wiki](https://github.com/VerbalExpressions/JSVerbalExpressions/wiki) and the [source](src/main/scala/com/github/verbalexpressions/VerbalExpression.scala)
+
+The intention of literate programming is to replace code comments with self evident code. For example:
+
+BAD:
+
+```scala
+val numberRegexp = """(\Q-\E)?\d+((\Q.\E)\d+)?""" // negative sign followed by digits, followed by optional fraction part
+```
+
+GOOD:
+
+```scala
 val fraction = $.andThen(".").digits()
 val number = $.maybe("-").digits().maybe(fraction)
+val pattern = number.compile    // the compiled pattern
+assert(number.regexp == """(\Q-\E)?\d+((\Q.\E)\d+)?""") // verify the regex
 
 assert(Seq("3", "-4", "-0.458") forall number.check)
 assert(Seq("0.", "hello", "4.3.2") forall number.notMatch)
 ```
-
-For more methods, checkout the [wiki](https://github.com/VerbalExpressions/JSVerbalExpressions/wiki) and the [source](src/main/scala/com/github/verbalexpressions/VerbalExpression.scala)
 
 sbt
 ===

@@ -243,6 +243,8 @@ class VerbalExpressionSpec extends Specification {
       // VerbalExpressions can be nested within each other
       val fraction = $.andThen(".").digits()
       val number = $.maybe("-").digits().maybe(fraction)
+      val pattern = number.compile    // the compiled pattern
+      assert(number.regexp == """(\Q-\E)?\d+((\Q.\E)\d+)?""") // verify the regex
 
       assert(Seq("3", "-4", "-0.458") forall number.check)
       assert(Seq("0.", "hello", "4.3.2") forall number.notMatch)

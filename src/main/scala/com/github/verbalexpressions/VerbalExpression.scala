@@ -8,6 +8,8 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def add(value: String) = copy(expression = expression + value)
 
   def andThen(value: StringOrVerbalExp) = add(s"($value)")
+  def exactly = andThen _
+  def just = andThen _
   def `then` = andThen _
   def find = andThen _
 
