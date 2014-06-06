@@ -31,6 +31,8 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def words(enable: Boolean = true) = add(if (enable) "\\w+" else "\\W+")
   def digits(enable: Boolean = true) = add(if (enable) "\\d+" else "\\D+")
 
+  def oneOf(values: StringOrVerbalExp*) = andThen(($ /: values) {_ or _})
+
   def anyOf(value: StringOrVerbalExp) = add(s"[$value]")
   def any = anyOf _
 
@@ -50,12 +52,15 @@ case class VerbalExpression(prefix: String = "", expression: String = "", suffix
   def withAnyCase(enable: Boolean = true) = modify(CaseInsensitive, enable)
   def searchOneLine(enable: Boolean = true) = modify(MultiLine, enable)
 
+  // TODO: add repeat an expr n times
   def repeat(n: Int) = add(s"{$n}")
   def repeat(atleast: Int, atmost: Int) = add(s"{$atleast,$atmost}")
   def repeatAtleast(n: Int) = add(s"{$n,}")
 
   def beginCapture = add("(")
   def endCapture = add(")")
+  def `(` = beginCapture
+  def `)` = endCapture
 
   def reluctant = add("?")
   def possessive = add("+")

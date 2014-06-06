@@ -246,11 +246,13 @@ class VerbalExpressionSpec extends Specification {
 
       val fraction = $.andThen(".").digits()
       val number = $.maybe("-").digits().maybe(fraction)
-      val pattern: java.util.regex.Pattern = number.compile    // the compiled pattern
       assert(number.regexp == numberRegex)
 
       assert(Seq("3", "-4", "-0.458") forall number.check)
       assert(Seq("0.", "hello", "4.3.2") forall number.notMatch)
+
+      val money = $.oneOf("$", "€", "₹", "¥").digits()    // works with symbols too
+      val pattern: java.util.regex.Pattern = money.compile    // the compiled pattern
 
       ok
     }

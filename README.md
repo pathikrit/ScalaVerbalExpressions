@@ -34,14 +34,19 @@ val numberRegex = """(\Q-\E)?\d+((\Q.\E)\d+)?""" // negative sign followed by di
 ```scala
 val fraction = $.andThen(".").digits()
 val number = $.maybe("-").digits().maybe(fraction)
-val pattern: java.util.regex.Pattern = number.compile    // the compiled pattern
 assert(number.regexp == numberRegex)
 
 assert(Seq("3", "-4", "-0.458") forall number.check)
 assert(Seq("0.", "hello", "4.3.2") forall number.notMatch)
 ```
 
-Performance: The library is essentially [a builder](http://stackoverflow.com/questions/328496/) around a regex string. So, it is as fast as using vanilla regex strings.
+**Performance**: As fast as vanilla regexes - the library is just [a builder](http://stackoverflow.com/questions/328496/) around a regex string. 
+You can always access the underlying compiled Pattern:
+
+```scala
+val money = $.oneOf("$", "€", "₹", "¥").digits()    // works with symbols too
+val pattern: java.util.regex.Pattern = money.compile    // the compiled pattern
+```
 
 sbt
 ===
@@ -49,5 +54,5 @@ Add the following to your `build.sbt`:
 ```scala
 resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
 
-libraryDependency += "com.github.verbalexpressions" %% "ScalaVerbalExpressions" % "1.0.0"
+libraryDependency += "com.github.verbalexpressions" %% "ScalaVerbalExpressions" % "1.0.1"
 ```
