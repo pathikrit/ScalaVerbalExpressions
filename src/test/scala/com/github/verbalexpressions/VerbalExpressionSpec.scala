@@ -217,7 +217,7 @@ class VerbalExpressionSpec extends Specification {
   }
 
   "capturing" should {
-    "allow for freetyping between parentensis" in {
+    "allow for free typing betweenparenthesiss" in {
       VerbalExpression()
         .beginCapture
         .range(0 -> 3)
@@ -245,7 +245,7 @@ class VerbalExpressionSpec extends Specification {
       val numberRegex = """(\Q-\E)?\d+((\Q.\E)\d+)?""" // negative sign followed by digits, followed by optional fraction part
 
       val fraction = $.andThen(".").digits()
-      val number = $.maybe("-").digits().maybe(fraction)
+      val number = $.maybe("-").digits().maybe(fraction)      // verbalexpressions can be composed
       assert(number.regexp == numberRegex)
 
       assert(Seq("3", "-4", "-0.458") forall number.check)
@@ -253,6 +253,14 @@ class VerbalExpressionSpec extends Specification {
 
       val money = $.oneOf("$", "€", "₹", "¥").digits()    // works with symbols too
       val pattern: java.util.regex.Pattern = money.compile    // the compiled pattern
+
+      val money2 = money.`(`.maybe(fraction).`)`     // capture the fraction part
+      val costOfPencil = "$43.23"
+      val i = money2.compile.matcher(costOfPencil).groupCount()
+      (0 to i) foreach {x =>
+        println(x + ": " + money2.compile.matcher(costOfPencil).group())
+      }
+
 
       ok
     }

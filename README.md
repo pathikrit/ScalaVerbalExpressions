@@ -33,7 +33,7 @@ val numberRegex = """(\Q-\E)?\d+((\Q.\E)\d+)?""" // negative sign followed by di
 
 ```scala
 val fraction = $.andThen(".").digits()
-val number = $.maybe("-").digits().maybe(fraction)
+val number = $.maybe("-").digits().maybe(fraction)       // verbalexpressions can be composed
 assert(number.regexp == numberRegex)
 
 assert(Seq("3", "-4", "-0.458") forall number.check)
